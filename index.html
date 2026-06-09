@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>QSM — Calcul mental</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body data-view="menu">
+
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand__mark">∑</span>
+      <div class="brand__text">
+        <h1>QSM</h1>
+        <p>Entraînement au calcul mental</p>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+
+    <!-- ====================== MENU ====================== -->
+    <section class="view view--menu" id="view-menu">
+
+      <div class="card config">
+        <h2 class="card__title">Nouvelle partie</h2>
+
+        <div class="op-group" data-op="mul">
+          <div class="op-head">
+            <span class="op-name"><span class="op-sign">×</span> Multiplication</span>
+            <div class="op-quick">
+              <button class="mini" data-all="mul">Tout</button>
+              <button class="mini" data-none="mul">Aucun</button>
+            </div>
+          </div>
+          <div class="chips" id="chips-mul"></div>
+        </div>
+
+        <div class="op-group" data-op="add">
+          <div class="op-head">
+            <span class="op-name"><span class="op-sign">+</span> Addition</span>
+            <div class="op-quick">
+              <button class="mini" data-all="add">Tout</button>
+              <button class="mini" data-none="add">Aucun</button>
+            </div>
+          </div>
+          <div class="chips" id="chips-add"></div>
+        </div>
+
+        <div class="op-group" data-op="sub">
+          <div class="op-head">
+            <span class="op-name"><span class="op-sign">−</span> Soustraction</span>
+            <div class="op-quick">
+              <button class="mini" data-all="sub">Tout</button>
+              <button class="mini" data-none="sub">Aucun</button>
+            </div>
+          </div>
+          <div class="chips" id="chips-sub"></div>
+        </div>
+
+        <div class="count-row">
+          <span class="op-name">Nombre de calculs</span>
+          <div class="chips chips--count" id="chips-count"></div>
+        </div>
+
+        <p class="warn" id="warn" hidden>Sélectionne au moins une table pour commencer.</p>
+        <button class="btn btn--primary btn--start" id="start">Commencer</button>
+      </div>
+
+      <div class="card progress-card">
+        <h2 class="card__title">Progression</h2>
+        <div class="stats-line">
+          <div class="stat">
+            <span class="stat__val" id="stat-best">—</span>
+            <span class="stat__lbl">Meilleur score</span>
+          </div>
+          <div class="stat">
+            <span class="stat__val" id="stat-games">0</span>
+            <span class="stat__lbl">Parties</span>
+          </div>
+          <div class="stat">
+            <span class="stat__val" id="stat-avg">—</span>
+            <span class="stat__lbl">Moyenne</span>
+          </div>
+        </div>
+        <div class="chart-box" id="chart-box"></div>
+      </div>
+
+    </section>
+
+    <!-- ====================== JEU ====================== -->
+    <section class="view view--game" id="view-game">
+      <div class="game-top">
+        <button class="ghost" id="quit">Quitter</button>
+        <span class="counter" id="counter">1 / 20</span>
+      </div>
+      <div class="bar"><div class="bar__fill" id="bar-fill"></div></div>
+
+      <div class="play">
+        <div class="problem" id="problem">3 × 4</div>
+        <input
+          id="answer"
+          class="answer"
+          inputmode="numeric"
+          autocomplete="off"
+          autocorrect="off"
+          spellcheck="false"
+          aria-label="Résultat" />
+        <div class="feedback" id="feedback"></div>
+      </div>
+    </section>
+
+    <!-- ====================== RÉSULTAT ====================== -->
+    <section class="view view--result" id="view-result">
+      <div class="card result">
+        <p class="result__eyebrow">Partie terminée</p>
+        <div class="result__score" id="result-score">0</div>
+        <p class="result__unit">points</p>
+
+        <div class="result__grid">
+          <div class="stat">
+            <span class="stat__val" id="r-solved">0</span>
+            <span class="stat__lbl">Réussis</span>
+          </div>
+          <div class="stat">
+            <span class="stat__val" id="r-first">0%</span>
+            <span class="stat__lbl">Du 1er coup</span>
+          </div>
+          <div class="stat">
+            <span class="stat__val" id="r-time">0.0s</span>
+            <span class="stat__lbl">Temps moyen</span>
+          </div>
+        </div>
+
+        <p class="result__delta" id="result-delta"></p>
+
+        <div class="result__actions">
+          <button class="btn btn--primary" id="replay">Rejouer</button>
+          <button class="btn btn--ghost" id="back-menu">Menu</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
