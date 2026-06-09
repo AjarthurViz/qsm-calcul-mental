@@ -202,8 +202,9 @@
 
     const input = $("answer");
     input.value = "";
-    input.disabled = false;
     input.classList.remove("shake");
+    // On garde le focus en continu : le clavier mobile ne se ferme jamais
+    input.focus();
 
     const fb = $("feedback");
     fb.className = "feedback";
@@ -216,17 +217,18 @@
     void prob.offsetWidth;
     prob.classList.add("enter");
 
-    // On démarre le chrono une fois le calcul affiché
-    requestAnimationFrame(() => {
-      game.startTime = performance.now();
-      game.locked = false;
-      input.focus();
-    });
+    // Démarrage du chrono + déverrouillage en synchrone (sans dépendre de
+    // requestAnimationFrame, qui peut être throttlé sur mobile pendant
+    // l'animation d'ouverture du clavier — ce qui bloquerait la saisie).
+    game.startTime = performance.now();
+    game.locked = false;
   }
 
   function onInput() {
-    if (game.locked) return;
     const input = $("answer");
+    // Pendant les animations / la révélation : on ignore et on efface la frappe
+    // (sans jamais désactiver le champ, pour garder le clavier mobile ouvert)
+    if (game.locked) { input.value = ""; return; }
     const ansStr = String(game.current.answer);
     const val = input.value.replace(/[^0-9]/g, "");
     if (val !== input.value) input.value = val;
@@ -249,7 +251,6 @@
     prob.classList.remove("enter");
     void prob.offsetWidth;
     prob.classList.add("correct");
-    $("answer").disabled = true;
 
     setTimeout(nextProblem, ADVANCE_MS);
   }
@@ -285,8 +286,9 @@
     game.results.push({ score: 0, time: 0, status: "fail" });
 
     const input = $("answer");
-    input.disabled = true;
+    input.value = "";
     input.classList.remove("shake");
+    input.focus(); // on garde le clavier ouvert pendant la révélation
 
     const fb = $("feedback");
     fb.className = "feedback reveal";
@@ -428,6 +430,36 @@
   }
 
   // ============================================================
+  //  THÈME (clair / sombre)
+  // ============================================================
+  function currentTheme() {
+    const explicit = document.documentElement.getAttribute("data-theme");
+    if (explicit === "light" || explicit === "dark") return explicit;
+    return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  }
+
+  function toggleTheme() {
+    const next = currentTheme() === "dark" ? "light" : "dark";
+    document.documentElement.setAttribute("data-theme", next);
+    try { localStorage.setItem("qsm_theme", next); } catch (_) {}
+  }
+
+  function setupTheme() {
+    $("theme-toggle").addEventListener("click", toggleTheme);
+    // Si l'utilisateur n'a pas choisi, on suit les changements du système
+    const mq = window.matchMedia("(prefers-color-scheme: dark)");
+    const onSysChange = (e) => {
+      let stored = null;
+      try { stored = localStorage.getItem("qsm_theme"); } catch (_) {}
+      if (stored !== "light" && stored !== "dark") {
+        document.documentElement.setAttribute("data-theme", e.matches ? "dark" : "light");
+      }
+    };
+    if (mq.addEventListener) mq.addEventListener("change", onSysChange);
+    else if (mq.addListener) mq.addListener(onSysChange);
+  }
+
+  // ============================================================
   //  INITIALISATION
   // ============================================================
   function init() {
@@ -437,6 +469,7 @@
     buildChips("chips-sub", "sub");
     buildCountChips();
     setupQuickButtons();
+    setupTheme();
     renderProgress();
 
     $("start").addEventListener("click", startGame);
@@ -448,8 +481,9 @@
     input.addEventListener("input", onInput);
     // On évite la soumission / on garde le focus
     input.addEventListener("keydown", (e) => { if (e.key === "Enter") e.preventDefault(); });
+    // Filet de sécurité : un tap dans la zone de jeu redonne le focus au champ
     $("view-game").addEventListener("click", () => {
-      if (body.dataset.view === "game" && !input.disabled) input.focus();
+      if (body.dataset.view === "game") input.focus();
     });
   }
 

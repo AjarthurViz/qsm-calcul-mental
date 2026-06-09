@@ -15,21 +15,19 @@
   --radius-sm: 12px;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #0f1015;
-    --card: #181a22;
-    --ink: #edeef2;
-    --muted: #8d92a1;
-    --line: #262934;
-    --accent: #8b8bf0;
-    --accent-soft: #20223a;
-    --good: #34c98a;
-    --good-soft: #142a22;
-    --bad: #f06a8a;
-    --bad-soft: #2c1822;
-    --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 12px 30px rgba(0, 0, 0, .35);
-  }
+[data-theme="dark"] {
+  --bg: #0f1015;
+  --card: #181a22;
+  --ink: #edeef2;
+  --muted: #8d92a1;
+  --line: #262934;
+  --accent: #8b8bf0;
+  --accent-soft: #20223a;
+  --good: #34c98a;
+  --good-soft: #142a22;
+  --bad: #f06a8a;
+  --bad-soft: #2c1822;
+  --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 12px 30px rgba(0, 0, 0, .35);
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -43,6 +41,7 @@ body {
   -webkit-font-smoothing: antialiased;
   line-height: 1.45;
   min-height: 100%;
+  transition: background-color .3s ease, color .3s ease;
 }
 
 /* ---------- Topbar ---------- */
@@ -50,8 +49,37 @@ body {
   max-width: 760px;
   margin: 0 auto;
   padding: 28px 20px 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
 }
 .brand { display: flex; align-items: center; gap: 14px; }
+
+/* ---------- Bouton de thème ---------- */
+.theme-toggle {
+  flex: none;
+  width: 42px; height: 42px;
+  display: grid; place-items: center;
+  border: 1.5px solid var(--line);
+  background: var(--card);
+  color: var(--ink);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: transform .12s ease, border-color .15s, background .15s, color .15s;
+}
+.theme-toggle:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-1px); }
+.theme-toggle:active { transform: scale(.94); }
+.theme-toggle svg { width: 20px; height: 20px; }
+.theme-toggle .ic-sun { display: none; }
+.theme-toggle .ic-moon { display: block; }
+[data-theme="dark"] .theme-toggle .ic-sun { display: block; }
+[data-theme="dark"] .theme-toggle .ic-moon { display: none; }
+.theme-toggle .ic-sun, .theme-toggle .ic-moon { animation: themeIcon .3s ease; }
+@keyframes themeIcon {
+  from { opacity: 0; transform: rotate(-30deg) scale(.7); }
+  to   { opacity: 1; transform: rotate(0) scale(1); }
+}
 .brand__mark {
   width: 46px; height: 46px;
   display: grid; place-items: center;
